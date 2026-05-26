@@ -9,8 +9,8 @@ build_template() {
     date=$(date +'%Y.%m.%d')
     version=${CIRCLE_BUILD_NUM-$date}
     tag=v$version-$(git log --format=%h -1)
-    echo $tag-$GOOS-$GOARCH
-    go build -ldflags="-X main.Version=$tag" -o ./bin/goia-$tag-$GOOS-$GOARCH$ext
+    echo "${tag}-${GOOS}-${GOARCH}"
+    go build -ldflags="-X main.Version=$tag" -o "./bin/goia-${tag}-${GOOS}-${GOARCH}${ext}"
 }
 
 # go tool dist list
