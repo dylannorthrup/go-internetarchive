@@ -1,10 +1,10 @@
-package util
+package internal
 
 import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -39,9 +39,9 @@ func Assert(b bool, msg string) {
 	}
 }
 
-// GetBytes fetch urlS and return []byte
-func GetBytes(urlS string, hdrs map[string]string) ([]byte, bool) {
-	req, err := http.NewRequest(http.MethodGet, urlS, nil)
+// GetBytes fetch urls and return []byte
+func GetBytes(urls string, hdrs map[string]string) ([]byte, bool) {
+	req, err := http.NewRequest(http.MethodGet, urls, nil)
 	if err != nil {
 		return nil, false
 	}
@@ -52,29 +52,29 @@ func GetBytes(urlS string, hdrs map[string]string) ([]byte, bool) {
 	if res.StatusCode >= 400 {
 		return nil, false
 	}
-	bys, err := ioutil.ReadAll(res.Body)
-	return bys, err == nil
+	byteSlice, err := io.ReadAll(res.Body)
+	return byteSlice, err == nil
 }
 
 // GetDoc fetch and html document and parses it
-func GetDoc(urlS string, hdrs map[string]string) (*goquery.Document, []byte, bool) {
-	bys, ok := GetBytes(urlS, hdrs)
+func GetDoc(urls string, hdrs map[string]string) (*goquery.Document, []byte, bool) {
+	byteSlice, ok := GetBytes(urls, hdrs)
 	if !ok {
-		return nil, bys, false
+		return nil, byteSlice, false
 	}
-	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(bys))
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(byteSlice))
 	if err != nil {
-		return doc, bys, false
+		return doc, byteSlice, false
 	}
-	return doc, bys, true
+	return doc, byteSlice, true
 }
 
 // GetJSON is similar to GetDoc but returns a fastjson object
-func GetJSON(urlS string, hdrs map[string]string) (*fastjson.Value, []byte, bool) {
-	bys, ok := GetBytes(urlS, hdrs)
+func GetJSON(urls string, hdrs map[string]string) (*fastjson.Value, []byte, bool) {
+	byteSlice, ok := GetBytes(urls, hdrs)
 	if !ok {
-		return nil, bys, false
+		return nil, byteSlice, false
 	}
-	val, err := fastjson.ParseBytes(bys)
-	return val, bys, err == nil
+	val, err := fastjson.ParseBytes(byteSlice)
+	return val, byteSlice, err == nil
 }

@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"github.com/nektro/internetarchive/pkg/cmd/download"
-	"github.com/nektro/internetarchive/pkg/cmd/metadata"
-
 	"github.com/spf13/cobra"
 )
 
