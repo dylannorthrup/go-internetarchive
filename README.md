@@ -1,11 +1,11 @@
 # InternetArchive
 
-[![license](https://img.shields.io/github/license/dylannorthrup/internetarchive.svg)](https://github.com/dylannorthrup/internetarchive/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/dylannorthrup/go-internetarchive.svg)](https://github.com/dylannorthrup/go-internetarchive/blob/master/LICENSE)
 [![paypal](https://img.shields.io/badge/donate-paypal-009cdf?logo=paypal)](https://paypal.me/nektro)
-[![goreportcard](https://goreportcard.com/badge/github.com/dylannorthrup/internetarchive)](https://goreportcard.com/report/github.com/dylannorthrup/internetarchive)
-[![downloads](https://img.shields.io/github/downloads/dylannorthrup/internetarchive/total.svg)](https://github.com/dylannorthrup/internetarchive/releases)
+[![goreportcard](https://goreportcard.com/badge/github.com/dylannorthrup/go-internetarchive)](https://goreportcard.com/report/github.com/dylannorthrup/go-internetarchive)
+[![downloads](https://img.shields.io/github/downloads/dylannorthrup/go-internetarchive/total.svg)](https://github.com/dylannorthrup/go-internetarchive/releases)
 
-`ia` is a command-line interface for interacting with https://archive.org/ written in Golang. It is an alternative to the offical Python client available here https://github.com/jjjake/internetarchive.
+`ia` is a command-line interface for interacting with https://archive.org/ written in Golang. It is an alternative to the offical Python client available [here](https://archive.org/developers/internetarchive/cli.html)
 
 ## Usage
 

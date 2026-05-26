@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	iaInt "github.com/dylannorthrup/internetarchive/internal"
+	iaInt "github.com/dylannorthrup/go-internetarchive/internal"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/nektro/go-util/arrays/stringsu"
