@@ -1,13 +1,9 @@
 # InternetArchive
 
-![loc](https://sloc.xyz/github/nektro/internetarchive)
-[![license](https://img.shields.io/github/license/nektro/internetarchive.svg)](https://github.com/nektro/internetarchive/blob/master/LICENSE)
-[![discord](https://img.shields.io/discord/551971034593755159.svg?logo=discord)](https://discord.gg/P6Y4zQC)
+[![license](https://img.shields.io/github/license/dylannorthrup/internetarchive.svg)](https://github.com/dylannorthrup/internetarchive/blob/master/LICENSE)
 [![paypal](https://img.shields.io/badge/donate-paypal-009cdf?logo=paypal)](https://paypal.me/nektro)
-[![circleci](https://circleci.com/gh/nektro/internetarchive.svg?style=svg)](https://circleci.com/gh/nektro/internetarchive)
-[![release](https://img.shields.io/github/v/release/nektro/internetarchive)](https://github.com/nektro/internetarchive/releases/latest)
-[![goreportcard](https://goreportcard.com/badge/github.com/nektro/internetarchive)](https://goreportcard.com/report/github.com/nektro/internetarchive)
-[![downloads](https://img.shields.io/github/downloads/nektro/internetarchive/total.svg)](https://github.com/nektro/internetarchive/releases)
+[![goreportcard](https://goreportcard.com/badge/github.com/dylannorthrup/internetarchive)](https://goreportcard.com/report/github.com/dylannorthrup/internetarchive)
+[![downloads](https://img.shields.io/github/downloads/dylannorthrup/internetarchive/total.svg)](https://github.com/dylannorthrup/internetarchive/releases)
 
 `ia` is a command-line interface for interacting with https://archive.org/ written in Golang. It is an alternative to the offical Python client available here https://github.com/jjjake/internetarchive.
 
@@ -43,7 +39,6 @@ Flags:
 ```
 
 ## Built With
-- Golang 1.14
 - https://github.com/spf13/cobra
 - https://github.com/nektro/go-util
 - https://github.com/PuerkitoBio/goquery
