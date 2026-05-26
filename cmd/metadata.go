@@ -1,4 +1,14 @@
-package metadata
+package cmd
+
+import (
+	"encoding/json"
+	"encoding/xml"
+	"fmt"
+
+	iaInt "github.com/dylannnorthrup/go-internetarchive/internal"
+
+	"github.com/spf13/cobra"
+)
 
 type iaMeta struct {
 	A string   `xml:"identifier,omitempty" json:"identifier,omitempty"`
@@ -26,4 +36,27 @@ type iaMeta struct {
 	U string   `xml:"num_top_ba,omitempty" json:"num_top_ba,omitempty"`
 	V []string `xml:"related_collection,omitempty" json:"related_collection,omitempty"`
 	W string   `xml:"show_search_by_year,omitempty" json:"show_search_by_year,omitempty"`
+}
+
+func init() {
+	//
+}
+
+// mdCmd is the cobra.Command
+var mdCmd = &cobra.Command{
+	Use:   "metadata",
+	Short: "retrieve metadata for items and collections",
+	Run: func(c *cobra.Command, args []string) {
+		iaInt.Assert(len(args) > 0, "missing item identifier")
+		name := args[0]
+		_, bys, ok := iaInt.GetDoc("https://archive.org/download/"+name+"/"+name+"_meta.xml", nil)
+		if !ok {
+			iaInt.LogError("errer finding metadata for item: " + name)
+			return
+		}
+		data := &iaMeta{}
+		_ = xml.Unmarshal(bys, data)
+		jsn, _ := json.MarshalIndent(data, "", "    ")
+		fmt.Println(string(jsn))
+	},
 }

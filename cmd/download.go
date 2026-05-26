@@ -1,15 +1,16 @@
-package download
+package cmd
 
 import (
 	"log"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	. "github.com/nektro/internetarchive/pkg/util"
+	iaInt "github.com/dylannorthrup/internetarchive/internal"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/nektro/go-util/arrays/stringsu"
@@ -27,28 +28,30 @@ var (
 	resume   bool
 	nStime   bool
 
-	sources = []string{"original", "metadata"}
+	sources   = []string{"original", "metadata"}
+	dlAliases = []string{"dl"}
 )
 
 func init() {
 	//
-	Cmd.Flags().StringP("save-dir", "o", "./data", "")
-	Cmd.Flags().BoolVar(&onlyMeta, "only-meta", false, "when enabled, only saves _meta.xml files")
-	Cmd.Flags().BoolVar(&dense, "dense", false, "when enabled, stores items based on their creation date")
-	Cmd.Flags().IntP("concurrency", "c", 10, "number of concurrent download jobs to run at once")
-	Cmd.Flags().BoolVar(&nSOrig, "no-original", false, "when enabled, does not save items with a source of original")
-	Cmd.Flags().BoolVar(&nSMeta, "no-metadata", false, "when enabled, does not save items with a source of metadata")
-	Cmd.Flags().BoolVar(&ySDerv, "yes-derivative", false, "when enabled, does save items with a source of derivative")
-	Cmd.Flags().BoolVar(&resume, "resume", false, "When enabled, performs a deeper check for item completion")
-	Cmd.Flags().BoolVar(&nStime, "no-time", false, "when enabled, does not use metadata's time")
+	dlCmd.Flags().StringP("save-dir", "o", "./data", "")
+	dlCmd.Flags().BoolVar(&onlyMeta, "only-meta", false, "when enabled, only saves _meta.xml files")
+	dlCmd.Flags().BoolVar(&dense, "dense", false, "when enabled, stores items based on their creation date")
+	dlCmd.Flags().IntP("concurrency", "c", 10, "number of concurrent download jobs to run at once")
+	dlCmd.Flags().BoolVar(&nSOrig, "no-original", false, "when enabled, does not save items with a source of original")
+	dlCmd.Flags().BoolVar(&nSMeta, "no-metadata", false, "when enabled, does not save items with a source of metadata")
+	dlCmd.Flags().BoolVar(&ySDerv, "yes-derivative", false, "when enabled, does save items with a source of derivative")
+	dlCmd.Flags().BoolVar(&resume, "resume", false, "When enabled, performs a deeper check for item completion")
+	dlCmd.Flags().BoolVar(&nStime, "no-time", false, "when enabled, does not use metadata's time")
 }
 
-// Cmd is the cobra.Command
-var Cmd = &cobra.Command{
-	Use:   "download",
-	Short: "download an item or collection",
+// dlCmd is the cobra.Command
+var dlCmd = &cobra.Command{
+	Use:     "download",
+	Aliases: dlAliases,
+	Short:   "download an item or collection",
 	Run: func(c *cobra.Command, args []string) {
-		Assert(len(args) > 0, "missing item identifier")
+		iaInt.Assert(len(args) > 0, "missing item identifier")
 		p, _ := c.Flags().GetString("save-dir")
 		cc, _ := c.Flags().GetInt("concurrency")
 		nso, _ := c.Flags().GetBool("no-original")
@@ -76,7 +79,7 @@ var Cmd = &cobra.Command{
 
 func dlItem(dir, name string, b *mbpp.BarProxy) {
 	mbpp.CreateJob("item: "+name, func(bar *mbpp.BarProxy) {
-		val, _, ok := GetJSON("https://archive.org/metadata/"+name, nil)
+		val, _, ok := iaInt.GetJSON("https://archive.org/metadata/"+name, nil)
 		if !ok {
 			return
 		}
@@ -99,7 +102,8 @@ func dlItem(dir, name string, b *mbpp.BarProxy) {
 		if !resume && util.DoesDirectoryExist(dir2) {
 			return
 		}
-		os.MkdirAll(dir2, os.ModePerm)
+		// TODO: Add proper return value checking
+		_ = os.MkdirAll(dir2, os.ModePerm)
 		wg := new(sync.WaitGroup)
 		arr := val.GetArray("files")
 		for _, item := range arr {
@@ -117,7 +121,7 @@ func dlItem(dir, name string, b *mbpp.BarProxy) {
 				go saveTo(dir2, name, n, b, t)
 				return
 			}
-			if !stringsu.Contains(sources, s) {
+			if !slices.Contains(sources, s) {
 				continue
 			}
 			bar.AddToTotal(1)
@@ -138,7 +142,7 @@ func dlCollection(dir, name string) {
 	mbpp.CreateJob("collection: "+name, func(bar *mbpp.BarProxy) {
 		dat := map[string]string{"x-requested-with": "XMLHttpRequest"}
 		for i := 1; true; i++ {
-			doc, _, _ := GetDoc("https://archive.org/details/"+name+"?&page="+strconv.Itoa(i), dat)
+			doc, _, _ := iaInt.GetDoc("https://archive.org/details/"+name+"?&page="+strconv.Itoa(i), dat)
 			arr := doc.Find(".item-ia[data-id]")
 			if arr.Length() == 1 {
 				break
@@ -161,7 +165,8 @@ func dlCollection(dir, name string) {
 
 func saveTo(dir, item, file string, b *mbpp.BarProxy, t time.Time) {
 	pathS := dir + "/" + file
-	os.MkdirAll(filepath.Dir(pathS), os.ModePerm)
+	// TODO: Add proper return value checking
+	_ = os.MkdirAll(filepath.Dir(pathS), os.ModePerm)
 	urlS := "https://archive.org/download/" + item + "/" + file
 	mbpp.CreateDownloadJob(urlS, pathS, b)
 	err := os.Chtimes(pathS, t.Local(), t.Local())
