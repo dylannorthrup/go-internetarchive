@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/nektro/internetarchive/pkg/cmd"
-	. "github.com/nektro/internetarchive/pkg/util"
+	"github.com/dylannorthrup/go-internetarchive/cmd"
+	iaInt "github.com/dylannorthrup/go-internetarchive/internal"
 )
 
 // Version takes in version string from build_all.sh
-var Version = "vMASTER"
+var Version = "vMAIN"
 
 func main() {
-	DieOnError(cmd.Root.Execute())
+	iaInt.DieOnError(cmd.Root.Execute())
 }
